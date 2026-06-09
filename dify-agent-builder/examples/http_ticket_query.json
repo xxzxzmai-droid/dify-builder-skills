@@ -1,0 +1,64 @@
+{
+  "app": {
+    "name": "工单查询助手",
+    "description": "调用业务接口查询工单并解释结果。",
+    "opening_statement": "请输入工单号或查询条件，我会调用接口并整理结果。",
+    "suggested_questions": [
+      "查询工单 WO-10086",
+      "最近有哪些待处理工单",
+      "这个工单当前状态是什么",
+      "帮我解释接口返回结果"
+    ]
+  },
+  "model": {
+    "name": "DeepSeek-V4-Flash"
+  },
+  "memory": true,
+  "design_notes": [
+    "接口地址和令牌使用环境变量，不硬编码密钥"
+  ],
+  "global_env_vars": [
+    {
+      "name": "API_BASE_URL",
+      "description": "业务 API 基础地址，例如 https://api.example.com",
+      "value_type": "string",
+      "default": ""
+    },
+    {
+      "name": "API_TOKEN",
+      "description": "业务 API Bearer Token",
+      "value_type": "secret",
+      "default": ""
+    }
+  ],
+  "global_inputs": [],
+  "routing": {
+    "enabled": false,
+    "routes": [
+      {
+        "id": "main",
+        "name": "工单查询",
+        "trigger": "",
+        "nodes": [
+          {
+            "kind": "http",
+            "name": "查询工单",
+            "method": "GET",
+            "path": "/v1/work-orders/search",
+            "base_env": "API_BASE_URL",
+            "token_env": "API_TOKEN",
+            "auth": "bearer"
+          },
+          {
+            "kind": "llm",
+            "system_prompt": "你是工单查询助手。依据 HTTP 返回内容回答用户问题，输出[查询结论、当前状态、责任人/部门、下一步建议]。接口无数据或字段缺失时如实说明，不补造。"
+          },
+          {
+            "kind": "answer",
+            "template": "自动"
+          }
+        ]
+      }
+    ]
+  }
+}

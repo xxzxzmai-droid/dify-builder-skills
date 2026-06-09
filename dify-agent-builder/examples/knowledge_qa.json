@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "制度问答助手",
+    "description": "基于知识库回答制度流程问题。",
+    "opening_statement": "请问制度、流程、审批或权限相关问题，我会基于知识库回答。",
+    "suggested_questions": [
+      "报销流程是怎样的",
+      "采购申请需要哪些审批",
+      "入库验收有哪些注意事项",
+      "权限变更怎么申请"
+    ]
+  },
+  "model": {
+    "name": "DeepSeek-V4-Flash"
+  },
+  "memory": true,
+  "design_notes": [
+    "单链路知识库问答，导入后选择实际制度知识库",
+    "提示词要求只依据检索结果回答，避免编造"
+  ],
+  "global_env_vars": [],
+  "global_inputs": [],
+  "routing": {
+    "enabled": false,
+    "routes": [
+      {
+        "id": "main",
+        "name": "主流程",
+        "trigger": "",
+        "nodes": [
+          {
+            "kind": "knowledge",
+            "dataset_ids": []
+          },
+          {
+            "kind": "llm",
+            "system_prompt": "你是制度流程问答助手。仅依据系统注入的知识库检索结果回答用户问题，按[结论→适用范围→办理步骤→依据/注意事项]输出。未检索到明确依据时，直接说明未检索到明确依据，并建议咨询主管部门；不要编造条款、编号或流程。"
+          },
+          {
+            "kind": "answer",
+            "template": "自动"
+          }
+        ]
+      }
+    ]
+  }
+}

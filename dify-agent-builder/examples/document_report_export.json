@@ -1,0 +1,50 @@
+{
+  "app": {
+    "name": "文档报告生成助手",
+    "description": "读取上传文档并生成可下载报告。",
+    "opening_statement": "上传文档后，我可以整理要点并生成报告文件。",
+    "suggested_questions": [
+      "把这份文档整理成报告",
+      "总结文档里的风险点",
+      "生成一份会议纪要",
+      "输出 Word 报告"
+    ]
+  },
+  "model": {
+    "name": "DeepSeek-V4-Pro"
+  },
+  "memory": true,
+  "design_notes": [
+    "文档抽取后交给一个 LLM 生成正文，再由文件导出节点生成下载链接"
+  ],
+  "global_env_vars": [],
+  "global_inputs": [],
+  "routing": {
+    "enabled": false,
+    "routes": [
+      {
+        "id": "main",
+        "name": "文档报告",
+        "trigger": "",
+        "nodes": [
+          {
+            "kind": "document-extractor"
+          },
+          {
+            "kind": "llm",
+            "system_prompt": "你是文档报告整理助手。依据上传文件文本生成一份结构化报告，包含[标题、摘要、关键事实、风险点、建议行动]。如果没有上传文件，提醒用户先上传文档；不要编造文档外的信息。"
+          },
+          {
+            "kind": "file-export",
+            "format": "docx",
+            "filename_hint": "文档报告"
+          },
+          {
+            "kind": "answer",
+            "template": "自动"
+          }
+        ]
+      }
+    ]
+  }
+}

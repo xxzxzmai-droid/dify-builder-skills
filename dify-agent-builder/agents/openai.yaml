@@ -1,0 +1,5 @@
+interface:
+  display_name: "Dify Agent Builder"
+  short_description: "Generate importable Dify Chatflow YAML"
+  brand_color: "#2563EB"
+  default_prompt: "Use $dify-agent-builder to build a ready-to-import Dify agent from this request."

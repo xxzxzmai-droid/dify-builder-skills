@@ -26,7 +26,8 @@ handled for you. You never hand-write YAML.
    API but give no purpose/method/path and don't say "placeholder is fine"), ask 1–2 sharp
    questions. Otherwise proceed with sensible defaults and state them.
 2. **Design a BlueprintSpec** following the philosophy below. Read `references/blueprint-spec.md`
-   for the exact JSON schema, every node kind, and worked examples before writing it.
+   for the exact JSON schema and every node kind. For a common pattern, start from the closest
+   `examples/*.json` file and edit only what the request requires.
 3. **Write the blueprint** to a temp JSON file, e.g. `/tmp/blueprint.json`.
 4. **Render it:** `python3 scripts/build_agent.py /tmp/blueprint.json <name>.yml`
    The script prints node/edge counts, validation warnings, and post-import manual steps.
@@ -85,3 +86,15 @@ correct user-input wiring even if your blueprint gets it wrong.
 
 Full schema, every field, and complete examples: **`references/blueprint-spec.md`** — read it before
 writing a blueprint.
+
+## Validation loop
+
+When changing the skill or when a generated result seems risky, run the local regression suite from
+the repo root:
+
+```bash
+python3 -m unittest tests.test_agent_builder
+```
+
+The checked examples cover knowledge Q&A, document extraction + file export, HTTP + env vars,
+classifier routing, condition routing, and vision upload wiring.

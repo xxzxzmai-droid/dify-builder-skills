@@ -18,8 +18,12 @@ and packaging scripts encode several non-obvious gotchas that otherwise cost hou
 
 1. **Understand the tool.** What does it take in, what does it produce (text / structured JSON /
    a downloadable file)? Does it need network or a credential/API key?
-2. **Copy the template:** `cp -r assets/plugin-template /tmp/<plugin_name>`.
-3. **Fill it in** (see `references/plugin-guide.md` for the full SDK reference):
+2. **Scaffold the plugin.** Prefer the deterministic scaffold over manual copying:
+   `python3 scripts/scaffold_plugin.py /tmp/<plugin_name> --name <plugin_name> --author <author_id> --label-zh "<中文名>" --label-en "<English name>" --description-zh "<中文描述>" --description-en "<English description>"`
+   Use `--mode downloadable-file|text|json`; the default is a downloadable-file tool that already
+   uses `meta["filename"]`.
+3. **Fill in or replace the tool logic** (see `references/plugin-guide.md` for the full SDK
+   reference):
    - `manifest.yaml`: set `author`, `name`, labels, description. `author` must be lowercase
      `[a-z0-9_]`; it forms the `provider_id` prefix.
    - `provider/<provider>.yaml` + `.py`: rename, set identity. No credentials → leave
@@ -68,3 +72,9 @@ python3 -m py_compile /tmp/<plugin_name>/main.py /tmp/<plugin_name>/provider/*.p
 python3 -c "import yaml,glob; [yaml.safe_load(open(f)) for f in glob.glob('/tmp/<plugin_name>/**/*.yaml',recursive=True)]"
 ```
 After packaging, confirm `目录条目=0` and `manifest在根=1` (the script prints both).
+
+When changing this skill, run:
+
+```bash
+python3 -m unittest tests.test_plugin_builder
+```

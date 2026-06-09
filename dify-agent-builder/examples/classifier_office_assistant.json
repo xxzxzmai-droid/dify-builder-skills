@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "综合办公助手",
+    "description": "按意图分流制度问答和工单查询。",
+    "opening_statement": "我可以回答制度问题，也可以查询工单状态。",
+    "suggested_questions": [
+      "报销流程怎么走",
+      "查询工单 WO-10086",
+      "采购申请需要哪些审批",
+      "最近待处理工单有哪些"
+    ]
+  },
+  "model": {
+    "name": "DeepSeek-V4-Pro"
+  },
+  "memory": true,
+  "design_notes": [
+    "两条路线需要不同工具，因此使用问题分类器分流"
+  ],
+  "global_env_vars": [
+    {
+      "name": "API_BASE_URL",
+      "description": "业务 API 基础地址",
+      "value_type": "string",
+      "default": ""
+    },
+    {
+      "name": "API_TOKEN",
+      "description": "业务 API Bearer Token",
+      "value_type": "secret",
+      "default": ""
+    }
+  ],
+  "global_inputs": [],
+  "routing": {
+    "enabled": true,
+    "type": "classifier",
+    "classifier_instruction": "询问制度、流程、审批、权限时选择制度问答；询问工单、状态、处理人、待办时选择工单查询。",
+    "routes": [
+      {
+        "id": "policy_qa",
+        "name": "制度问答",
+        "trigger": "制度流程规范问题",
+        "nodes": [
+          {
+            "kind": "knowledge",
+            "dataset_ids": []
+          },
+          {
+            "kind": "llm",
+            "system_prompt": "你是制度流程问答助手。仅依据知识库检索结果回答，按[结论、依据、步骤、注意事项]输出。无命中时说明未检索到明确依据。"
+          },
+          {
+            "kind": "answer",
+            "template": "自动"
+          }
+        ]
+      },
+      {
+        "id": "ticket_query",
+        "name": "工单查询",
+        "trigger": "查询工单状态或待办",
+        "nodes": [
+          {
+            "kind": "http",
+            "name": "查询工单",
+            "method": "GET",
+            "path": "/v1/work-orders/search",
+            "base_env": "API_BASE_URL",
+            "token_env": "API_TOKEN",
+            "auth": "bearer"
+          },
+          {
+            "kind": "llm",
+            "system_prompt": "你是工单查询助手。依据 HTTP 返回内容整理工单状态、责任人、时间和下一步动作；字段缺失时说明缺失。"
+          },
+          {
+            "kind": "answer",
+            "template": "自动"
+          }
+        ]
+      }
+    ]
+  }
+}

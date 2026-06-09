@@ -1,0 +1,43 @@
+{
+  "app": {
+    "name": "图片票据识别助手",
+    "description": "识别图片内容并结构化输出。",
+    "opening_statement": "上传票据、截图或证件图片，我会识别并结构化提取信息。",
+    "suggested_questions": [
+      "识别这张票据",
+      "提取截图里的字段",
+      "把图片内容整理成 JSON",
+      "检查这张图片有没有关键信息缺失"
+    ]
+  },
+  "model": {
+    "name": "DeepSeek-V4-Pro"
+  },
+  "memory": true,
+  "design_notes": [
+    "图片走 vision LLM，不使用文档抽取节点"
+  ],
+  "global_env_vars": [],
+  "global_inputs": [],
+  "routing": {
+    "enabled": false,
+    "routes": [
+      {
+        "id": "main",
+        "name": "图片识别",
+        "trigger": "",
+        "nodes": [
+          {
+            "kind": "llm",
+            "vision": true,
+            "system_prompt": "你是图片票据识别助手。识别图片中的文字和关键信息，严格输出 JSON：{\"doc_type\":\"\",\"raw_text\":\"\",\"fields\":{},\"risk_notes\":\"\"}。图片不清或信息缺失时在 risk_notes 说明；不要编造看不见的信息。"
+          },
+          {
+            "kind": "answer",
+            "template": "自动"
+          }
+        ]
+      }
+    ]
+  }
+}

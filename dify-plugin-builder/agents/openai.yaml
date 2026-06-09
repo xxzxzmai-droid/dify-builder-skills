@@ -1,0 +1,5 @@
+interface:
+  display_name: "Dify Plugin Builder"
+  short_description: "Scaffold and package Dify tool plugins"
+  brand_color: "#059669"
+  default_prompt: "Use $dify-plugin-builder to create and package a Dify tool plugin for this request."

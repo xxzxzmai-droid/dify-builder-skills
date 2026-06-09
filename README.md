@@ -1,10 +1,10 @@
 # Dify Builder Skills
 
-两个用于 **Dify 自动化开发** 的 Claude 技能（Agent Skills）。装上之后，你只要用大白话说需求，
-Claude 就能直接产出可用的成品：
+两个用于 **Dify 自动化开发** 的 Codex/Claude 技能（Agent Skills）。装上之后，你只要用大白话说需求，
+agent 就能直接产出可用的成品：
 
 - **`dify-agent-builder`** —— 说"做一个 X 的 Dify 智能体"，直接产出**可导入的 Dify 0.3.0
-  Chatflow `.yml`**。Claude 充当架构师设计结构化蓝图，由确定性引擎 `assembler.py` 忠实拼装成
+  Chatflow `.yml`**。agent 充当架构师设计结构化蓝图，由确定性引擎 `assembler.py` 忠实拼装成
   合法、接好线的 YAML（节点ID/连线/环境变量/数据接线/校验全自动）。
 - **`dify-plugin-builder`** —— 说"做一个 X 的 Dify 插件"，直接产出**可安装的 `.difypkg`**。从经过
   验证的模板脚手架开始，填好工具逻辑并正确打包（含内网/离线 wheels 路径、`zip -D` 等踩坑规避）。
@@ -20,7 +20,7 @@ wheel 等等——都是踩了坑才知道的。
 
 ```
 dify-agent-builder/    SKILL.md + scripts/(assembler.py, build_agent.py) + references/
-dify-plugin-builder/   SKILL.md + scripts/(pack_plugin.sh, fetch_offline_wheels.sh) + assets/plugin-template/ + references/
+dify-plugin-builder/   SKILL.md + scripts/(scaffold_plugin.py, pack_plugin.sh, fetch_offline_wheels.sh) + assets/plugin-template/ + references/
 ```
 
 ## 怎么用
@@ -32,7 +32,16 @@ dify-plugin-builder/   SKILL.md + scripts/(pack_plugin.sh, fetch_offline_wheels.
 - "做一个识别图片文字并结构化输出的多模态 Dify 智能体"
 - "做一个把 markdown 转成可下载 PDF 文件的 Dify 工具插件"
 
-Claude 会自动触发对应技能、产出 `.yml` 或 `.difypkg` 给你，并告诉你导入后要配置什么。
+agent 会自动触发对应技能、产出 `.yml` 或 `.difypkg` 给你，并告诉你导入后要配置什么。
+
+## 本地验证
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+测试覆盖智能体 DSL 的知识库、文档、HTTP、多路由、条件分流、图片识别，以及插件脚手架和 `.difypkg`
+打包结构。
 
 ## 设计原则（为什么生成的东西好用）
 

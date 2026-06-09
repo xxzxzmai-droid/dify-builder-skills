@@ -1,0 +1,77 @@
+{
+  "app": {
+    "name": "文件或普通问答助手",
+    "description": "用条件分流演示上传文件和普通问答两条路线。",
+    "opening_statement": "可以上传文档让我分析，也可以直接提问。",
+    "suggested_questions": [
+      "分析我上传的文件",
+      "没有文件时直接回答这个问题"
+    ]
+  },
+  "model": {
+    "name": "DeepSeek-V4-Flash"
+  },
+  "memory": true,
+  "design_notes": [
+    "这是少数需要测试 if-else 接线的条件分流样例；实际产品通常优先单 LLM 判断"
+  ],
+  "global_env_vars": [],
+  "global_inputs": [],
+  "routing": {
+    "enabled": true,
+    "type": "condition",
+    "pre_extract": true,
+    "router": {
+      "purpose": "按是否有上传文档文本分流",
+      "python_lines": [
+        "def main(query: str = '', file_text: str = '') -> dict:",
+        "    return {'route_key': 'doc' if str(file_text).strip() else 'general'}"
+      ],
+      "inputs": [
+        {
+          "variable": "query",
+          "from": "query"
+        },
+        {
+          "variable": "file_text",
+          "from": "prev_doc"
+        }
+      ]
+    },
+    "routes": [
+      {
+        "id": "doc",
+        "case": "doc",
+        "name": "文档分析",
+        "trigger": "有上传文件文本",
+        "nodes": [
+          {
+            "kind": "llm",
+            "system_prompt": "你是文档分析助手。依据上传文件文本输出摘要、关键事实和风险点。"
+          },
+          {
+            "kind": "answer",
+            "template": "自动"
+          }
+        ]
+      },
+      {
+        "id": "general",
+        "case": "else",
+        "is_else": true,
+        "name": "普通问答",
+        "trigger": "没有上传文件",
+        "nodes": [
+          {
+            "kind": "llm",
+            "system_prompt": "你是普通问答助手。直接回答用户问题，保持简洁准确。"
+          },
+          {
+            "kind": "answer",
+            "template": "自动"
+          }
+        ]
+      }
+    ]
+  }
+}

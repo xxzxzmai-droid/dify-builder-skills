@@ -24,6 +24,31 @@ my_plugin/
 e.g. `yourname/my_plugin/my_provider`; the tool is referenced by `tool_name` = the tool yaml's
 `identity.name`.
 
+## Scaffold CLI
+
+Use `scripts/scaffold_plugin.py` when starting a new plugin. It copies `assets/plugin-template/`,
+renames provider/tool files, updates `manifest.yaml`, updates `source:` paths, and writes starter
+Python classes.
+
+```bash
+python3 scripts/scaffold_plugin.py /tmp/work_order_exporter \
+  --name work_order_exporter \
+  --author yourname \
+  --provider work_order_provider \
+  --tool export_work_order \
+  --label-zh "工单导出" \
+  --label-en "Work Order Exporter" \
+  --description-zh "把工单内容导出为可下载文件。" \
+  --description-en "Export work order content as a downloadable file." \
+  --filename-default work-order.txt
+```
+
+Modes:
+
+- `downloadable-file` (default): emits a text message plus `create_blob_message(..., meta={"filename": ...})`.
+- `text`: emits one text message.
+- `json`: emits a JSON message with content and length.
+
 ## SDK essentials (package `dify_plugin`, import as `dify_plugin`)
 
 **Tool:**
