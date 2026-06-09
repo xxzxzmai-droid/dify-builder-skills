@@ -1,0 +1,31 @@
+version: 0.0.1
+type: plugin
+author: yourname            # 小写字母/数字/下划线;决定 provider_id 前缀
+name: my_plugin             # 插件包名(小写下划线)
+label:
+  en_US: My Plugin
+  zh_Hans: 我的插件
+description:
+  en_US: One-line description of what this plugin does.
+  zh_Hans: 一句话说明这个插件做什么。
+icon: icon.svg
+resource:
+  memory: 268435456
+  permission:
+    tool:
+      enabled: true
+plugins:
+  tools:
+    - provider/my_provider.yaml   # 指向 provider yaml(不是目录!)
+meta:
+  version: 0.0.1
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main
+created_at: 2026-01-01T00:00:00+08:00
+privacy: PRIVACY.md
+verified: false

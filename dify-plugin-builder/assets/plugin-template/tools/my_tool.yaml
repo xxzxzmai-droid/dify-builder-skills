@@ -1,0 +1,30 @@
+identity:
+  name: my_tool              # tool_name(工作流里 tool 节点引用)
+  author: yourname
+  label:
+    en_US: My Tool
+    zh_Hans: 我的工具
+description:
+  human:
+    en_US: Convert input content into a downloadable file.
+    zh_Hans: 把输入内容转成一个可下载的文件。
+  llm: Convert the given content into a downloadable file attachment.
+parameters:
+  - name: content
+    type: string
+    required: true
+    label: {en_US: Content, zh_Hans: 内容}
+    human_description: {en_US: The content to save., zh_Hans: 要保存的内容。}
+    llm_description: The full text content to write into the file.
+    form: llm
+  - name: filename
+    type: string
+    required: false
+    default: output.txt
+    label: {en_US: File name, zh_Hans: 文件名}
+    human_description: {en_US: Output file name (with extension)., zh_Hans: 输出文件名(带后缀)。}
+    llm_description: Desired output file name, e.g. report.yml
+    form: llm
+extra:
+  python:
+    source: tools/my_tool.py

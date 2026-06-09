@@ -1,0 +1,6 @@
+# 在线环境(能访问 PyPI)直接:
+dify_plugin
+# 内网/离线环境改成下面(把依赖 wheel 放进 wheels/,见 references/plugin-guide.md):
+# --no-index
+# --find-links=./wheels/
+# dify_plugin==0.4.1

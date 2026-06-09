@@ -1,0 +1,15 @@
+identity:
+  author: yourname
+  name: my_provider          # provider 名(小写);provider_id = author/plugin_name/provider_name
+  label:
+    en_US: My Provider
+    zh_Hans: 我的工具集
+  description:
+    en_US: Tools provided by this plugin.
+    zh_Hans: 本插件提供的工具。
+  icon: icon.svg
+tools:
+  - tools/my_tool.yaml
+extra:
+  python:
+    source: provider/my_provider.py
