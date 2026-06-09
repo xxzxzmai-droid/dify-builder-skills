@@ -43,6 +43,15 @@ python3 -m unittest discover -s tests
 测试覆盖智能体 DSL 的知识库、文档、HTTP、多路由、条件分流、图片识别，以及插件脚手架和 `.difypkg`
 打包结构。
 
+## 离线分享包
+
+```bash
+scripts/package_offline.sh
+```
+
+生成的 zip 只用于本地线下分享，不上传到 GitHub Release。解压后可运行
+`./install_offline.sh --target codex` 或 `./install_offline.sh --target both` 安装。
+
 ## 设计原则（为什么生成的东西好用）
 
 - **少即是多**：优先最少节点 + 一个写好提示词的 LLM，把判断/条件/逻辑写进提示词，而不是拆成

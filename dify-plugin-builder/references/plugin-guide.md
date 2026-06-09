@@ -24,6 +24,9 @@ my_plugin/
 e.g. `yourname/my_plugin/my_provider`; the tool is referenced by `tool_name` = the tool yaml's
 `identity.name`.
 
+For current Dify compatibility notes (manifest shape, author matching, SDK-version caveats), see
+`../../dify-agent-builder/references/compatibility.md` in the repository root context.
+
 ## Scaffold CLI
 
 Use `scripts/scaffold_plugin.py` when starting a new plugin. It copies `assets/plugin-template/`,

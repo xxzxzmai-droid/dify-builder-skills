@@ -5,17 +5,31 @@
 - `dify-agent-builder`：从自然语言需求生成可导入 Dify Chatflow `.yml`
 - `dify-plugin-builder`：从自然语言需求生成并打包 Dify 工具插件 `.difypkg`
 
-## 安装到 Codex
+## 推荐安装方式
 
-把两个目录复制到本机 Codex skills 目录：
+解压后进入离线包目录，直接运行：
+
+```bash
+./install_offline.sh --target codex
+```
+
+如果同时想安装到 Claude：
+
+```bash
+./install_offline.sh --target both
+```
+
+然后重启 Codex/Claude。
+
+## 手动安装到 Codex
+
+也可以把两个目录复制到本机 Codex skills 目录：
 
 ```bash
 mkdir -p ~/.codex/skills
 cp -R dify-agent-builder ~/.codex/skills/
 cp -R dify-plugin-builder ~/.codex/skills/
 ```
-
-然后重启 Codex。
 
 ## 安装到 Claude
 
@@ -27,7 +41,7 @@ cp -R dify-agent-builder ~/.claude/skills/
 cp -R dify-plugin-builder ~/.claude/skills/
 ```
 
-然后重启 Claude。
+复制后重启 Claude。
 
 ## 验证
 

@@ -16,6 +16,7 @@ mkdir -p "$STAGE"
 cp -R dify-agent-builder "$STAGE/"
 cp -R dify-plugin-builder "$STAGE/"
 cp OFFLINE_INSTALL.md "$STAGE/"
+cp install_offline.sh "$STAGE/"
 cp README.md "$STAGE/"
 cp LICENSE "$STAGE/"
 

@@ -27,7 +27,8 @@ handled for you. You never hand-write YAML.
    questions. Otherwise proceed with sensible defaults and state them.
 2. **Design a BlueprintSpec** following the philosophy below. Read `references/blueprint-spec.md`
    for the exact JSON schema and every node kind. For a common pattern, start from the closest
-   `examples/*.json` file and edit only what the request requires.
+   `examples/*.json` file and edit only what the request requires. If the target Dify version or
+   plugin/runtime compatibility is in doubt, read `references/compatibility.md` before rendering.
 3. **Write the blueprint** to a temp JSON file, e.g. `/tmp/blueprint.json`.
 4. **Render it:** `python3 scripts/build_agent.py /tmp/blueprint.json <name>.yml`
    The script prints node/edge counts, validation warnings, and post-import manual steps.
