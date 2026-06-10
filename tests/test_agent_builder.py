@@ -92,6 +92,7 @@ class AgentBuilderExamplesTest(unittest.TestCase):
         self.assertEqual(envs["API_BASE_URL"]["value_type"], "string")
         self.assertEqual(envs["API_TOKEN"]["value_type"], "secret")
         self.assertIn("{{#env.API_TOKEN#}}", dsl)
+        self.assertIn("keyword={{#sys.query#}}", dsl)
         self.assertNotIn("Bearer sk-", dsl)
 
     def test_classifier_example_has_independent_route_answers(self):

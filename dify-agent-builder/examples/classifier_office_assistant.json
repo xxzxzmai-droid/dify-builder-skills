@@ -66,6 +66,7 @@
             "name": "查询工单",
             "method": "GET",
             "path": "/v1/work-orders/search",
+            "query_param": "keyword",
             "base_env": "API_BASE_URL",
             "token_env": "API_TOKEN",
             "auth": "bearer"

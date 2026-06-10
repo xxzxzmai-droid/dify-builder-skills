@@ -9,8 +9,11 @@ REV="$(git rev-parse --short HEAD 2>/dev/null || echo local)"
 OUT_DIR="$ROOT/dist"
 STAGE="$OUT_DIR/dify-builder-skills-offline-$STAMP-$REV"
 ZIP_PATH="$STAGE.zip"
+LATEST_ZIP="$OUT_DIR/dify-builder-skills-offline-latest.zip"
 
 rm -rf "$STAGE" "$ZIP_PATH"
+mkdir -p "$OUT_DIR"
+find "$OUT_DIR" -maxdepth 1 -type d -name 'dify-builder-skills-offline-*' -exec rm -rf {} +
 mkdir -p "$STAGE"
 
 cp -R dify-agent-builder "$STAGE/"
@@ -26,5 +29,8 @@ find "$STAGE" -name '.DS_Store' -delete
 find "$STAGE" -name '*.difypkg' -delete
 
 (cd "$OUT_DIR" && zip -qr "$(basename "$ZIP_PATH")" "$(basename "$STAGE")")
+cp "$ZIP_PATH" "$LATEST_ZIP"
+rm -rf "$STAGE"
 
 echo "$ZIP_PATH"
+echo "$LATEST_ZIP"

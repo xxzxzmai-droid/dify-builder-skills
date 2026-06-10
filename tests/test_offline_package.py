@@ -16,8 +16,12 @@ class OfflinePackageTest(unittest.TestCase):
             capture_output=True,
             check=True,
         )
-        package_path = Path(result.stdout.strip())
+        output_paths = [Path(line.strip()) for line in result.stdout.splitlines() if line.strip()]
+        self.assertEqual(len(output_paths), 2)
+        package_path, latest_path = output_paths
         self.assertTrue(package_path.exists(), package_path)
+        self.assertTrue(latest_path.exists(), latest_path)
+        self.assertEqual(latest_path.name, "dify-builder-skills-offline-latest.zip")
         with zipfile.ZipFile(package_path) as package:
             names = package.namelist()
         joined = "\n".join(names)

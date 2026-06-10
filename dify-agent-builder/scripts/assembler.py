@@ -161,6 +161,11 @@ def render_http(spec, node_id, x, y):
     path = spec.get("path") or "/v1/your-endpoint"
     url = "{{#env." + base_env + "#}}" + path
     auth = str(spec.get("auth") or "bearer").lower()
+    method = str(spec.get("method") or "GET").upper()
+    query_param = safe_id(spec.get("query_param"), "") if spec.get("query_param") else ""
+    if query_param and method == "GET":
+        joiner = "&" if "?" in url else "?"
+        url += joiner + query_param + "={{#sys.query#}}"
     body = spec.get("body") or None
     headers = "Accept: application/json"
     if body:
@@ -172,13 +177,13 @@ def render_http(spec, node_id, x, y):
         "body": {"data": [{"type": "text", "value": body}] if body else [{"type": "text", "value": ""}],
                  "type": "json" if body else "none"},
         "headers": headers,
-        "method": spec.get("method") or "GET",
+        "method": method,
         "params": "",
         "retry_config": {"max_retries": 2, "retry_enabled": True, "retry_interval": 500},
         "ssl_verify": False,
         "timeout": {"max_connect_timeout": 20, "max_read_timeout": 60, "max_write_timeout": 60},
         "url": url,
-        "variables": [],
+        "variables": [{"value_selector": ["sys", "query"], "variable": "query"}] if query_param else [],
     }, height=156)
     return n, [node_id, "body"]
 

@@ -21,6 +21,8 @@
 
 然后重启 Codex/Claude。
 
+如果你的 agent 只收到 zip 附件，请先让它解压附件，再在解压目录执行上面的命令。
+
 ## 手动安装到 Codex
 
 也可以把两个目录复制到本机 Codex skills 目录：

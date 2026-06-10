@@ -41,9 +41,11 @@ top of `assembler.py`.)
   user selects the dataset after import.
 - `{"kind":"document-extractor"}` — extracts text from uploaded **documents** (Word/PDF/Excel/CSV/TXT)
   via `sys.files`. Empty (not an error) when no file. **Never** feed images here.
-- `{"kind":"http","name":"查询","method":"GET","path":"/v1/...","base_env":"API_BASE_URL","token_env":"API_TOKEN","auth":"bearer|none","body":""}`
+- `{"kind":"http","name":"查询","method":"GET","path":"/v1/...","query_param":"q","base_env":"API_BASE_URL","token_env":"API_TOKEN","auth":"bearer|none","body":""}`
   — calls an API. URL = `{{#env.BASE_ENV#}}` + path. Bearer token via `{{#env.TOKEN_ENV#}}`. Never
-  hardcode secrets; declare them in `global_env_vars` (value_type `secret`).
+  hardcode secrets; declare them in `global_env_vars` (value_type `secret`). For `GET`, set
+  `query_param` when the endpoint should receive the runtime user question, e.g.
+  `?keyword={{#sys.query#}}`.
 - `{"kind":"code","purpose":"做什么","python_lines":["def main(...) -> dict:","    ..."],"inputs":[{"variable":"x","from":"query|prev_llm|prev_http|prev_doc|prev_code"}]}`
   — only when an LLM genuinely can't read-and-do the task (precise counting, parsing, file output).
   Must define `def main(...) -> dict` returning a dict with a string `"result"`. `python_lines` is a

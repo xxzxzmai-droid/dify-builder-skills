@@ -15,7 +15,28 @@ wheel 等等——都是踩了坑才知道的。
 
 ## 安装
 
-把任一技能目录放到 Claude 能发现技能的位置即可（如 `~/.claude/skills/`），或作为插件的一部分分发。
+### Codex 在线安装
+
+```bash
+python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
+  --repo xxzxzmai-droid/dify-builder-skills \
+  --path dify-agent-builder dify-plugin-builder
+```
+
+如果当前 Python/GitHub 下载环境有证书问题，改用 git 方式：
+
+```bash
+python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
+  --method git \
+  --repo xxzxzmai-droid/dify-builder-skills \
+  --path dify-agent-builder dify-plugin-builder
+```
+
+安装后重启 Codex。
+
+### 手动安装
+
+把任一技能目录放到 agent 能发现技能的位置即可（如 `~/.codex/skills/` 或 `~/.claude/skills/`）。
 每个技能都是自包含的：
 
 ```
@@ -49,8 +70,9 @@ python3 -m unittest discover -s tests
 scripts/package_offline.sh
 ```
 
-生成的 zip 只用于本地线下分享，不上传到 GitHub Release。解压后可运行
-`./install_offline.sh --target codex` 或 `./install_offline.sh --target both` 安装。
+生成的 zip 只用于本地线下分享，不上传到 GitHub Release。脚本会同时生成带版本号的 zip 和
+`dist/dify-builder-skills-offline-latest.zip`。解压后可运行 `./install_offline.sh --target codex`
+或 `./install_offline.sh --target both` 安装。
 
 ## 设计原则（为什么生成的东西好用）
 
