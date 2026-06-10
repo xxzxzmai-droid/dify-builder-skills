@@ -19,6 +19,10 @@ architect: you design a structured **BlueprintSpec** (JSON), then run a determin
 wired-up Dify YAML — node IDs, edges, env-var declarations, data plumbing and validation are all
 handled for you. You never hand-write YAML.
 
+Assume Dify development and runtime are **内网/offline** unless the user explicitly says otherwise:
+no public API calls, no internet-only dependencies, and no generated plugin that relies on PyPI at
+install time.
+
 ## Workflow
 
 1. **Understand the need.** What should the agent do? Who uses it? What inputs (text / uploaded

@@ -6,13 +6,20 @@ description: >-
   .difypkg — e.g. "做一个把文本转成可下载文件的Dify插件", "帮我做个Dify工具插件调用某个API",
   "build a Dify plugin that converts markdown to PDF", "package this as a .difypkg". Trigger even if
   they don't say ".difypkg". The skill scaffolds the plugin from a proven template, fills in the
-  tool logic, and packages it correctly (including the offline-wheels path for air-gapped/内网 Dify).
+  tool logic, and packages it correctly for air-gapped/内网 Dify with bundled offline wheels.
 ---
 
 # Dify Plugin Builder
 
-Scaffold, implement, and package a **Dify tool plugin** into an installable `.difypkg`. The template
-and packaging scripts encode several non-obvious gotchas that otherwise cost hours.
+Scaffold, implement, and package a **Dify tool plugin** into an installable `.difypkg` for
+air-gapped/内网 Dify. Assume the target Dify server cannot reach the internet. The template and
+packaging scripts encode several non-obvious gotchas that otherwise cost hours.
+
+## Non-negotiable delivery rule
+
+Every generated plugin must be **fully offline installable**: `requirements.txt` must use
+`--no-index` + `--find-links=./wheels/`, and `wheels/*.whl` must be included in the `.difypkg`.
+Do not deliver a plugin package that depends on the Dify server reaching PyPI.
 
 ## Workflow
 
@@ -31,25 +38,25 @@ and packaging scripts encode several non-obvious gotchas that otherwise cost hou
    - `tools/<tool>.yaml` + `.py`: define parameters and the `_invoke` logic. The template's example
      tool returns a downloadable file — adapt or replace it.
    - Rename the referenced files and update the `source:` / `tools:` paths to match.
-4. **Choose online vs offline** (critical — see below).
+4. **Prepare offline dependencies** (required):
+   - If this machine can reach PyPI for the target platform:
+     `bash scripts/fetch_offline_wheels.sh /tmp/<plugin_name> 3.12 manylinux2014_aarch64`
+   - If not, copy wheels from a plugin already verified on the same Dify server:
+     `python3 scripts/prepare_offline_plugin.py /tmp/<plugin_name> --wheels-from /path/to/verified/wheels`
+   - If neither is available, stop and ask for the target server platform or a verified wheels
+     directory. Do not package an online-only plugin.
 5. **Package:** `bash scripts/pack_plugin.sh /tmp/<plugin_name> <plugin_name>.difypkg`
    The script uses `zip -D` (no directory entries) — required, or install fails with
-   `read tools: is a directory`.
+   `read tools: is a directory`. It also refuses to package unless offline requirements and
+   `wheels/*.whl` are present.
 6. **Deliver the `.difypkg`** and tell the user how to install (Dify → 插件 → 安装插件 → 本地文件),
    plus any post-install step (select a model, fill credentials).
 
-## Online vs offline — get this right or install fails
+## Offline dependency source
 
-The Dify plugin daemon installs the plugin's Python deps at install time.
-
-- **Internet-connected Dify** (can reach PyPI): leave `requirements.txt` as `dify_plugin`. Done.
-- **Air-gapped / 内网 Dify** (cannot reach PyPI): you MUST bundle dependency wheels, or install
-  fails with *"init environment for plugin … failed too many times … package is corrupted or your
-  network is unstable"*. Run `bash scripts/fetch_offline_wheels.sh /tmp/<plugin_name> 3.12 <platform>`
-  (platform must match the server, e.g. `manylinux2014_aarch64` for ARM64), which downloads wheels
-  into `wheels/` and switches `requirements.txt` to `--no-index --find-links=./wheels/`. If pip can't
-  get a wheel for that platform, the most reliable path is to copy the `wheels/` directory from an
-  existing plugin that already installs offline on that same server.
+The Dify plugin daemon installs Python deps during plugin install. In our scenario it has no
+internet. Always bundle wheels. `manylinux2014_aarch64` is common for ARM64 servers; use
+`manylinux2014_x86_64` for x86_64. If unsure, ask for the server architecture before packaging.
 
 ## Output a downloadable file from a tool (common, and full of traps)
 

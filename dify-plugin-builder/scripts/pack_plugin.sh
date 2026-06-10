@@ -14,6 +14,18 @@ case "$OUT" in
   *)  OUTABS="$(pwd)/$OUT" ;;
 esac
 cd "$DIR"
+if [ "${DIFY_ALLOW_ONLINE_DEPS:-}" != "1" ]; then
+  REQ_ACTIVE="$(grep -v '^[[:space:]]*#' requirements.txt 2>/dev/null || true)"
+  if ! printf '%s\n' "$REQ_ACTIVE" | grep -q -- '--no-index' || ! printf '%s\n' "$REQ_ACTIVE" | grep -q -- '--find-links=./wheels/'; then
+    echo "ERROR: 内网交付要求离线依赖。先运行 prepare_offline_plugin.py 或 fetch_offline_wheels.sh，把 requirements.txt 切到 --no-index 模式。" >&2
+    exit 2
+  fi
+  WHEEL_COUNT=$(find wheels -maxdepth 1 -name '*.whl' 2>/dev/null | wc -l | tr -d ' ')
+  if [ "$WHEEL_COUNT" = "0" ]; then
+    echo "ERROR: 内网交付要求 wheels/*.whl 随包交付。先复制已验证 wheels/，或运行 fetch_offline_wheels.sh。" >&2
+    exit 2
+  fi
+fi
 find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
 find . -name '*.pyc' -delete; find . -name '.DS_Store' -delete
 rm -f "$OUTABS"

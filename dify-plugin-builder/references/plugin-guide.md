@@ -9,7 +9,8 @@ Everything needed to write and package a Dify **tool** plugin. The template in
 my_plugin/
 ├── manifest.yaml            # plugin meta; plugins.tools points to provider yaml
 ├── main.py                  # fixed entrypoint (Plugin(...).run())
-├── requirements.txt         # dify_plugin  (or offline --no-index form)
+├── requirements.txt         # offline --no-index form
+├── wheels/*.whl             # required for 内网/offline Dify installs
 ├── PRIVACY.md
 ├── _assets/icon.svg         # referenced as `icon: icon.svg`
 ├── provider/
@@ -51,6 +52,12 @@ Modes:
 - `downloadable-file` (default): emits a text message plus `create_blob_message(..., meta={"filename": ...})`.
 - `text`: emits one text message.
 - `json`: emits a JSON message with content and length.
+
+After scaffolding, always prepare offline dependencies before packaging:
+
+```bash
+python3 scripts/prepare_offline_plugin.py /tmp/work_order_exporter --wheels-from /path/to/verified/wheels
+```
 
 ## SDK essentials (package `dify_plugin`, import as `dify_plugin`)
 
@@ -117,7 +124,7 @@ install from local file.
 
 ## Offline (air-gapped / 内网) install
 
-If the Dify server can't reach PyPI, bundle wheels:
+Our Dify development target is intranet/offline. Always bundle wheels:
 ```
 requirements.txt:
     --no-index
@@ -128,6 +135,8 @@ wheels/*.whl   ← dify_plugin==0.4.1 + its full dependency closure, for the ser
 `scripts/fetch_offline_wheels.sh <dir> <pyver> <platform>` does this. Wheels are platform-specific
 (e.g. `cp312` + `manylinux2014_aarch64` for Python 3.12 on ARM64). If pip can't produce them for the
 target platform, copy `wheels/` from a plugin that already installs offline on that exact server.
+`scripts/pack_plugin.sh` refuses to package unless offline requirements and `wheels/*.whl` are present,
+unless `DIFY_ALLOW_ONLINE_DEPS=1` is explicitly set for a local-only experiment.
 
 ## Common failure → cause
 
